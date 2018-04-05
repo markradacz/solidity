@@ -25,6 +25,7 @@
 
 #include <sstream>
 #include <string>
+#include <boost/filesystem.hpp>
 #include "Common.h"
 
 namespace dev
@@ -56,5 +57,7 @@ std::string toString(_T const& _t)
 	o << _t;
 	return o.str();
 }
+
+boost::filesystem::path weaklyCanonical(boost::filesystem::path const& _path);
 
 }
