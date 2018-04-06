@@ -685,14 +685,17 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		{
 			if (!arguments.empty())
 			{
+				// function-sel(Error(string)) + encoding
 				solAssert(arguments.size() == 1, "");
 				solAssert(function.parameterTypes().size() == 1, "");
-				m_context << u256(0);
 				arguments.front()->accept(*this);
 				utils().fetchFreeMemoryPointer();
+				m_context << (u256(FixedHash<4>::Arith(FixedHash<4>(dev::keccak256("Error(string)")))) << (256 - 32));
+				m_context << Instruction::DUP2 << Instruction::MSTORE;
+				m_context << u256(4) << Instruction::ADD;
 				utils().abiEncode(
-					{make_shared<IntegerType>(256), arguments.front()->annotation().type},
-					{make_shared<IntegerType>(256), make_shared<ArrayType>(DataLocation::Memory, true)}
+					{arguments.front()->annotation().type},
+					{make_shared<ArrayType>(DataLocation::Memory, true)}
 				);
 				utils().toSizeAfterFreeMemoryPointer();
 				m_context << Instruction::REVERT;
