@@ -65,6 +65,28 @@ public:
 	Expression& operator=(Expression const&) = default;
 	Expression& operator=(Expression&&) = default;
 
+	/// Checks whether this operator has a valid arity based on its name.
+	/// _arity is the arity of the operator in the solver.
+	bool isValid(unsigned _arity) const
+	{
+		static std::map<std::string, unsigned> operatorsArity{
+			{"ite", 3},
+			{"not", 1},
+			{"and", 2},
+			{"or", 2},
+			{"=", 2},
+			{"<", 2},
+			{"<=", 2},
+			{">", 2},
+			{">=", 2},
+			{"+", 2},
+			{"-", 2},
+			{"*", 2},
+			{"/", 2}
+		};
+		return operatorsArity.count(name) && operatorsArity.at(name) == _arity;
+	}
+
 	static Expression ite(Expression _condition, Expression _trueValue, Expression _falseValue)
 	{
 		solAssert(_trueValue.sort == _falseValue.sort, "");

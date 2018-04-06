@@ -125,6 +125,7 @@ string SMTLib2Interface::toSExpr(Expression const& _expr)
 	for (auto const& arg: _expr.arguments)
 		sexpr += " " + toSExpr(arg);
 	sexpr += ")";
+	solAssert(_expr.isValid(_expr.arguments.size()), "");
 	return sexpr;
 }
 
