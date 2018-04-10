@@ -37,10 +37,9 @@
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/sliced.hpp>
 #include <boost/range/adaptor/transformed.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
 
 #include <limits>
-
-#include <boost/multiprecision/cpp_dec_float.hpp>
 
 using namespace std;
 using namespace dev;
@@ -52,6 +51,7 @@ namespace
 bool fitsPrecision(bigint const _base, bigint const _exp)
 {
 	using boost::multiprecision::log10;
+	using boost::multiprecision::log2;
 	using boost::multiprecision::ceil;
 	using bigfloat = boost::multiprecision::cpp_dec_float_50;
 
@@ -60,7 +60,8 @@ bool fitsPrecision(bigint const _base, bigint const _exp)
 	if(_base > baseMax)
 		return false;
 
-	bigfloat bitsNeeded = bigfloat(_exp) * ceil(log10(bigfloat(_base + 1)));
+	bigfloat digitsNeeded = bigfloat(_exp) * ceil(log10(bigfloat(_base + 1)));
+	bigfloat bitsNeeded = ceil((digitsNeeded - 1) * log2(bigfloat(10)));
 	if (bitsNeeded > bitsMax)
 		return false;
 
