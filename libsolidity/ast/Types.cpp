@@ -53,7 +53,7 @@ bool fitsPrecision(bigint const _base, bigint const _exp)
 {
 	using boost::multiprecision::log10;
 	using boost::multiprecision::ceil;
-	using bigfloat = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<50>>;
+	using bigfloat = boost::multiprecision::cpp_dec_float_50;
 
 	size_t const bitsMax = 4096;
 	bigint const baseMax = (bigint(2) << bitsMax) - 1;
@@ -939,12 +939,13 @@ TypePointer RationalNumberType::binaryOperatorResult(Token::Value _operator, Typ
 				return TypePointer(); // This will need too much memory to represent.
 
 			uint32_t exponent = abs(other.m_value).numerator().convert_to<uint32_t>();
-			bigint numerator = pow(m_value.numerator(), exponent);
-			bigint denominator = pow(m_value.denominator(), exponent);
 
 			// Limit size to 4096 bits
-			if (!fitsPrecision(numerator, exponent))
+			if (!fitsPrecision(m_value.numerator(), exponent))
 				return TypePointer();
+
+			bigint numerator = pow(m_value.numerator(), exponent);
+			bigint denominator = pow(m_value.denominator(), exponent);
 
 			if (other.m_value >= 0)
 				value = rational(numerator, denominator);
